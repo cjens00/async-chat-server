@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6"/>
+	<Project>
+		<Option title="game_server"/>
+		<Option makefile_is_custom="1"/>
+		<Option compiler="msvc8"/>
+		<Option virtualFolders="CMake Files\;CMake Files\..\;CMake Files\..\..\;CMake Files\..\..\..\;CMake Files\..\..\..\..\;CMake Files\..\..\..\..\Tools\;CMake Files\..\..\..\..\Tools\vcpkg\;CMake Files\..\..\..\..\Tools\vcpkg\scripts\;CMake Files\..\..\..\..\Tools\vcpkg\scripts\buildsystems\;CMake Files\..\..\..\..\Tools\vcpkg\installed\;CMake Files\..\..\..\..\Tools\vcpkg\installed\x64-windows\;CMake Files\..\..\..\..\Tools\vcpkg\installed\x64-windows\share\;CMake Files\..\..\..\..\Tools\vcpkg\installed\x64-windows\share\asio\;"/>
+		<Build>
+			<Target title="all">
+				<Option working_dir="D:/Programming Projects/Win11/Cpp/game_server/out/dbg"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 all"/>
+					<CompileFile command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game_server">
+				<Option output="D:/Programming Projects/Win11/Cpp/game_server/out/dbg/game_server.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/Programming Projects/Win11/Cpp/game_server/out/dbg"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="D:/Tools/vcpkg/installed/x64-windows/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 game_server"/>
+					<CompileFile command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="game_server/fast">
+				<Option output="D:/Programming Projects/Win11/Cpp/game_server/out/dbg/game_server.exe" prefix_auto="0" extension_auto="0"/>
+				<Option working_dir="D:/Programming Projects/Win11/Cpp/game_server/out/dbg"/>
+				<Option object_output="./"/>
+				<Option type="1"/>
+				<Option compiler="msvc8"/>
+				<Compiler>
+					<Add directory="D:/Tools/vcpkg/installed/x64-windows/include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\ATLMFC\include"/>
+					<Add directory="C:\Program Files (x86)\Microsoft Visual Studio\2019\Community\VC\Tools\MSVC\14.29.30133\include"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\NETFXSDK\4.8\include\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\ucrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\shared"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\um"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\winrt"/>
+					<Add directory="C:\Program Files (x86)\Windows Kits\10\include\10.0.19041.0\cppwinrt"/>
+				</Compiler>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 game_server/fast"/>
+					<CompileFile command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="edit_cache">
+				<Option working_dir="D:/Programming Projects/Win11/Cpp/game_server/out/dbg"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 edit_cache"/>
+					<CompileFile command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+			<Target title="rebuild_cache">
+				<Option working_dir="D:/Programming Projects/Win11/Cpp/game_server/out/dbg"/>
+				<Option type="4"/>
+				<MakeCommands>
+					<Build command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 rebuild_cache"/>
+					<CompileFile command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 &quot;$file&quot;"/>
+					<Clean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+					<DistClean command="nmake /NOLOGO /f &quot;D:\Programming Projects\Win11\Cpp\game_server\out\dbg\Makefile&quot; VERBOSE=1 clean"/>
+				</MakeCommands>
+			</Target>
+		</Build>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/main.cpp">
+			<Option target="game_server"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core.cpp">
+			<Option target="game_server"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core.hpp">
+			<Option target="game_server"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core_practice.cpp">
+			<Option target="game_server"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/CMakeLists.txt">
+			<Option virtualFolder="CMake Files\"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/../../../../Tools/vcpkg/scripts/buildsystems/vcpkg.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\Tools\vcpkg\scripts\buildsystems\"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/../../../../Tools/vcpkg/installed/x64-windows/share/asio/asio-config.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\Tools\vcpkg\installed\x64-windows\share\asio\"/>
+		</Unit>
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/../../../../Tools/vcpkg/installed/x64-windows/share/asio/asio-targets.cmake">
+			<Option virtualFolder="CMake Files\..\..\..\..\Tools\vcpkg\installed\x64-windows\share\asio\"/>
+		</Unit>
+	</Project>
+</CodeBlocks_project_file>
