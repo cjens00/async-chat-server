@@ -23,7 +23,7 @@ Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifi
 
 /// Performs required setup tasks for Session
 void Session::async_session_begin() {
-    // ok write to client
+    async_read();
 }
 
 /// Asynchronously write data to the socket
@@ -116,10 +116,10 @@ void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
         // TODO: Fix problem with handlers, w/o err handler there can be no debugging, just hangs on connect
         new_client->set_handlers([&](int client_id) { on_error(client_id); },
                                  [&](std::string msg) { on_message(msg); });
+        new_client->async_session_begin();
         client_id++;
         async_post(std::format("User at {} is online", new_client->get_address_as_string()));
         Log(std::format("Accepted new connection from {}", new_client->get_address_as_string()));
-
         async_accept_connection();
     } else {
         on_error(-1);
@@ -149,9 +149,9 @@ void Server::on_message(std::string &msg) {
 /// Error Handler, also handles disconnects
 void Server::on_error(int cid) {
     if (cid == -1) {
-        std::cout << "on_error[server]  : " << ec.get()->message() << std::endl;
+        std::cout << "on_error[server]  : " << ec->message() << std::endl;
     } else {
-        std::cout << "on_error[session] : " << ec.get()->message() << std::endl;
+        std::cout << "on_error[session] : " << ec->message() << std::endl;
         auto weak = std::weak_ptr(clients[cid]);
         auto shared = weak.lock();
         std::string caddr = shared->get_address_as_string();
