@@ -74,9 +74,28 @@ CMakeFiles\game_server.dir\main.cpp.s: cmake_force
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\game_server.dir\main.cpp.s /c "D:\Programming Projects\Win11\Cpp\game_server\main.cpp"
 <<
 
+CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj: CMakeFiles\game_server.dir\flags.make
+CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj: ..\..\net_core_from_tutorial.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game_server.dir/net_core_from_tutorial.cpp.obj"
+	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj /FdCMakeFiles\game_server.dir\ /FS -c "D:\Programming Projects\Win11\Cpp\game_server\net_core_from_tutorial.cpp"
+<<
+
+CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game_server.dir/net_core_from_tutorial.cpp.i"
+	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe > CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.i @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\Programming Projects\Win11\Cpp\game_server\net_core_from_tutorial.cpp"
+<<
+
+CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game_server.dir/net_core_from_tutorial.cpp.s"
+	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe @<<
+ /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\game_server.dir\net_core_from_tutorial.cpp.s /c "D:\Programming Projects\Win11\Cpp\game_server\net_core_from_tutorial.cpp"
+<<
+
 CMakeFiles\game_server.dir\net_core.cpp.obj: CMakeFiles\game_server.dir\flags.make
 CMakeFiles\game_server.dir\net_core.cpp.obj: ..\..\net_core.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_2) "Building CXX object CMakeFiles/game_server.dir/net_core.cpp.obj"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game_server.dir/net_core.cpp.obj"
 	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe @<<
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\game_server.dir\net_core.cpp.obj /FdCMakeFiles\game_server.dir\ /FS -c "D:\Programming Projects\Win11\Cpp\game_server\net_core.cpp"
 <<
@@ -93,37 +112,18 @@ CMakeFiles\game_server.dir\net_core.cpp.s: cmake_force
  /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\game_server.dir\net_core.cpp.s /c "D:\Programming Projects\Win11\Cpp\game_server\net_core.cpp"
 <<
 
-CMakeFiles\game_server.dir\net_core_practice.cpp.obj: CMakeFiles\game_server.dir\flags.make
-CMakeFiles\game_server.dir\net_core_practice.cpp.obj: ..\..\net_core_practice.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir="D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/game_server.dir/net_core_practice.cpp.obj"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoCMakeFiles\game_server.dir\net_core_practice.cpp.obj /FdCMakeFiles\game_server.dir\ /FS -c "D:\Programming Projects\Win11\Cpp\game_server\net_core_practice.cpp"
-<<
-
-CMakeFiles\game_server.dir\net_core_practice.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/game_server.dir/net_core_practice.cpp.i"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe > CMakeFiles\game_server.dir\net_core_practice.cpp.i @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E "D:\Programming Projects\Win11\Cpp\game_server\net_core_practice.cpp"
-<<
-
-CMakeFiles\game_server.dir\net_core_practice.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/game_server.dir/net_core_practice.cpp.s"
-	C:\PROGRA~2\MICROS~2\2019\COMMUN~1\VC\Tools\MSVC\1429~1.301\bin\Hostx64\x64\cl.exe @<<
- /nologo /TP $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) /FoNUL /FAs /FaCMakeFiles\game_server.dir\net_core_practice.cpp.s /c "D:\Programming Projects\Win11\Cpp\game_server\net_core_practice.cpp"
-<<
-
 # Object files for target game_server
 game_server_OBJECTS = \
 "CMakeFiles\game_server.dir\main.cpp.obj" \
-"CMakeFiles\game_server.dir\net_core.cpp.obj" \
-"CMakeFiles\game_server.dir\net_core_practice.cpp.obj"
+"CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj" \
+"CMakeFiles\game_server.dir\net_core.cpp.obj"
 
 # External object files for target game_server
 game_server_EXTERNAL_OBJECTS =
 
 game_server.exe: CMakeFiles\game_server.dir\main.cpp.obj
+game_server.exe: CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj
 game_server.exe: CMakeFiles\game_server.dir\net_core.cpp.obj
-game_server.exe: CMakeFiles\game_server.dir\net_core_practice.cpp.obj
 game_server.exe: CMakeFiles\game_server.dir\build.make
 game_server.exe: CMakeFiles\game_server.dir\objects1.rsp
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir="D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX executable game_server.exe"

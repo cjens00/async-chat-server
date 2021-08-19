@@ -95,7 +95,7 @@
 		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core.hpp">
 			<Option target="game_server"/>
 		</Unit>
-		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core_practice.cpp">
+		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/net_core_from_tutorial.cpp">
 			<Option target="game_server"/>
 		</Unit>
 		<Unit filename="D:/Programming Projects/Win11/Cpp/game_server/CMakeLists.txt">

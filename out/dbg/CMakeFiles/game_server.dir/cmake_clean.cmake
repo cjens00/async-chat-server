@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/game_server.dir/main.cpp.obj"
   "CMakeFiles/game_server.dir/net_core.cpp.obj"
-  "CMakeFiles/game_server.dir/net_core_practice.cpp.obj"
+  "CMakeFiles/game_server.dir/net_core_from_tutorial.cpp.obj"
   "game_server.exe"
   "game_server.exe.manifest"
   "game_server.lib"

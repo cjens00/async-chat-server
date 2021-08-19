@@ -166,29 +166,29 @@ net_core.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core.cpp.s
 .PHONY : net_core.cpp.s
 
-net_core_practice.obj: net_core_practice.cpp.obj
-.PHONY : net_core_practice.obj
+net_core_from_tutorial.obj: net_core_from_tutorial.cpp.obj
+.PHONY : net_core_from_tutorial.obj
 
 # target to build an object file
-net_core_practice.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_practice.cpp.obj
-.PHONY : net_core_practice.cpp.obj
+net_core_from_tutorial.cpp.obj:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj
+.PHONY : net_core_from_tutorial.cpp.obj
 
-net_core_practice.i: net_core_practice.cpp.i
-.PHONY : net_core_practice.i
+net_core_from_tutorial.i: net_core_from_tutorial.cpp.i
+.PHONY : net_core_from_tutorial.i
 
 # target to preprocess a source file
-net_core_practice.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_practice.cpp.i
-.PHONY : net_core_practice.cpp.i
+net_core_from_tutorial.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.i
+.PHONY : net_core_from_tutorial.cpp.i
 
-net_core_practice.s: net_core_practice.cpp.s
-.PHONY : net_core_practice.s
+net_core_from_tutorial.s: net_core_from_tutorial.cpp.s
+.PHONY : net_core_from_tutorial.s
 
 # target to generate assembly for a file
-net_core_practice.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_practice.cpp.s
-.PHONY : net_core_practice.cpp.s
+net_core_from_tutorial.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.s
+.PHONY : net_core_from_tutorial.cpp.s
 
 # Help Target
 help:
@@ -205,9 +205,9 @@ help:
 	@echo ... net_core.obj
 	@echo ... net_core.i
 	@echo ... net_core.s
-	@echo ... net_core_practice.obj
-	@echo ... net_core_practice.i
-	@echo ... net_core_practice.s
+	@echo ... net_core_from_tutorial.obj
+	@echo ... net_core_from_tutorial.i
+	@echo ... net_core_from_tutorial.s
 .PHONY : help
 
 

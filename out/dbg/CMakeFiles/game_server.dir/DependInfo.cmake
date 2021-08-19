@@ -10,7 +10,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "D:/Programming Projects/Win11/Cpp/game_server/main.cpp" "D:/Programming Projects/Win11/Cpp/game_server/out/dbg/CMakeFiles/game_server.dir/main.cpp.obj"
   "D:/Programming Projects/Win11/Cpp/game_server/net_core.cpp" "D:/Programming Projects/Win11/Cpp/game_server/out/dbg/CMakeFiles/game_server.dir/net_core.cpp.obj"
-  "D:/Programming Projects/Win11/Cpp/game_server/net_core_practice.cpp" "D:/Programming Projects/Win11/Cpp/game_server/out/dbg/CMakeFiles/game_server.dir/net_core_practice.cpp.obj"
+  "D:/Programming Projects/Win11/Cpp/game_server/net_core_from_tutorial.cpp" "D:/Programming Projects/Win11/Cpp/game_server/out/dbg/CMakeFiles/game_server.dir/net_core_from_tutorial.cpp.obj"
   )
 set(CMAKE_CXX_COMPILER_ID "MSVC")
 

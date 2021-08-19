@@ -1,180 +1,161 @@
 #pragma once
 
-/// Client & Server Objects, Asynchronous Free Functions ///
+#include "net_core.hpp"
 
-#include <iostream>
-#include <optional>
-#include <string>
-#include <format>
-#include <vector>
-#include <chrono>
-#include <queue>
-#include <locale>
-#include <unordered_set>
+/// ---------------------------------------
+///     Free Function(s)
+/// ---------------------------------------
 
-#ifdef _WIN32
-#define _WIN32_WINNT 0x0A00
-#endif
+/// Prints message to log
+/// TODO: Write to logfile
+void Log(std::string s) {
+    auto timestamp = floor<std::chrono::seconds>(std::chrono::system_clock::now());
+    auto log = std::format("{} Log: ", timestamp);
+    std::cout << log << s << std::endl;
+}
 
-#define ASIO_STANDALONE
+/// ---------------------------------------
+///     Session Implementation
+/// ---------------------------------------
 
-#include <asio.hpp>
+/// Session Constructor
+Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifier(id) {}
 
-using tcp = asio::ip::tcp;
-using error_code = asio::error_code;
-using message_handler = std::function<void(std::string)>;
-using error_handler = std::function<void()>;
-using namespace std::placeholders;
+/// Performs required setup tasks for Session
+void Session::async_session_begin() {
+    async_read();
+}
 
-class position {
-public:
-    float x = 0.0;
-    float y = 0.0;
-    float z = 0.0;
+/// Asynchronously write data to the socket
+void Session::async_write() {
+    asio::async_write(socket, asio::buffer(message_queue.front()),
+                      [&](asio::error_code ec, std::size_t b_tx) { handler_write(ec, b_tx); });
+}
 
-    position() = default;
-};
+/// Asynchronously read data from the socket
+void Session::async_read() {
+    asio::async_read_until(socket, stream_buffer, "\n",
+                           [&](asio::error_code ec, std::size_t b_rx) { handler_read(ec, b_rx); });
+}
 
-class rotation {
-public:
-    float x = 0.0;
-    float y = 0.0;
-    float z = 0.0;
+/// Handler called after session begin
+void Session::handler_begin() {}
 
-    rotation() = default;
-};
+/// Handler called after an async write
+void Session::handler_write(asio::error_code error, std::size_t bytes_transferred) {
+    if (!error) {
+        message_queue.pop();
+        if (!message_queue.empty()) { async_write(); }
+    } else {
+        socket.close(error);
+        error_handler(get_client_id());
+    }
+}
 
-class transform {
-public:
-    transform() : pos(), rot(), transformBuffer{pos.x, pos.y, pos.z, rot.x, rot.y, rot.z} {}
-
-private:
-    position pos;
-    rotation rot;
-    float transformBuffer[6];
-};
-
-// Session
-class session : public std::enable_shared_from_this<session> {
-public:
-    // socket is an rvalue reference, we move it
-    session(tcp::socket &&socket_) :
-            socket(std::move(socket_)) {}
-
-    void start(message_handler &&on_message, error_handler &&on_error) {
-        this->on_message = std::move(on_message);
-        this->on_error = std::move(on_error);
+/// Handler called after an async read
+void Session::handler_read(asio::error_code error, std::size_t bytes_transferred) {
+    if (!error) {
+        std::stringstream message;
+        message << socket.remote_endpoint(error) << ": " << std::istream(&stream_buffer).rdbuf();
+        stream_buffer.consume(bytes_transferred);
+        message_handler(message.str());
         async_read();
+    } else {
+        socket.close(error);
+        error_handler(get_client_id());
     }
+}
 
-    void post(const std::string &message) {
-        bool idle = outgoing.empty();
-        outgoing.push(message);
-        if (idle) {
-            async_write();
-        }
+/// Move error handler from Server
+void Session::set_handlers(std::function<void(int)> &&err_handler, std::function<void(std::string)> &&msg_handler) {
+    error_handler = std::move(err_handler);
+    message_handler = std::move(msg_handler);
+}
+
+/// Return String representation of client's IP Address
+std::string Session::get_address_as_string() { return socket.remote_endpoint().address().to_string(); }
+
+/// Sends a string msg to the associated client
+void Session::async_send_message(std::string &msg) {
+    bool isIdle = message_queue.empty();
+    message_queue.push(msg);
+    if (isIdle)
+        async_write();
+}
+
+/// Returns the session's client identifier value
+int Session::get_client_id() {
+    return identifier;
+}
+
+/// ---------------------------------------
+///     Server Implementation
+/// ---------------------------------------
+
+/// Constructor
+Server::Server(asio::io_context &context, std::uint16_t port)
+        : io_context(context), acceptor(io_context, tcp::endpoint(tcp::v4(), port)),
+            client_id(0) {
+    Log("Server Initialized.");
+}
+
+/// Asynchronously accept a new connection
+void Server::async_accept_connection() {
+    temp_socket.emplace(io_context);
+    acceptor.async_accept(*temp_socket, [&](asio::error_code errc) {
+        if (!ec) ec = std::make_unique<asio::error_code>(errc);
+        on_accept(*temp_socket, errc); });
+}
+
+/// Notify all clients of new connection, then await another connection
+void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
+    if (!error) {
+        auto new_client = std::make_shared<Session>(std::move(*temp_socket), client_id);
+
+        clients.insert({client_id, new_client});
+        // TODO: Fix problem with handlers, w/o err handler there can be no debugging, just hangs on connect
+        new_client->set_handlers([&](int client_id) { on_error(client_id); },
+                                 [&](std::string msg) { on_message(msg); });
+        new_client->async_session_begin();
+        client_id++;
+        async_post(std::format("User at {} is online", new_client->get_address_as_string()));
+        Log(std::format("Accepted new connection from {}", new_client->get_address_as_string()));
+        async_accept_connection();
+    } else {
+        on_error(-1);
     }
+}
 
-private:
-
-    void async_read() {
-        //asio::async_read(socket, readBuffer, std::bind(&session::on_read, shared_from_this(), _1, _2));
-        asio::async_read_until(socket, streambuf, "\n", std::bind(&session::on_read, shared_from_this(), _1, _2));
+/// Make an announcement 'msg' to all connected clients
+void Server::async_post(std::string &msg) {
+    for (auto &client: clients) {
+        client.second->async_send_message(msg);
     }
+}
 
-    void on_read(error_code error, std::size_t bytes_transferred) {
-        if (!error) {
-            std::stringstream message;
-            message << socket.remote_endpoint(error) << ": " << std::istream(&streambuf).rdbuf();
-            streambuf.consume(bytes_transferred);
-            on_message(message.str());
-            async_read();
-        } else {
-            socket.close(error);
-            on_error();
-        }
+/// rvalue overload
+void Server::async_post(std::string &&msg) {
+    std::string msg_ = std::move(msg);
+    for (auto &client: clients) {
+        client.second->async_send_message(msg_);
     }
+}
 
-    void async_write() {
-        asio::async_write(socket, asio::buffer(outgoing.front()),
-                          std::bind(&session::on_write, shared_from_this(), _1, _2));
+/// Message handler, writes a received message to all client sockets
+void Server::on_message(std::string &msg) {
+    async_post(msg);
+}
+
+/// Error Handler, also handles disconnects
+void Server::on_error(int cid) {
+    if (cid == -1) {
+        std::cout << "on_error[server]  : " << ec->message() << std::endl;
+    } else {
+        std::cout << "on_error[session] : " << ec->message() << std::endl;
+        auto weak = std::weak_ptr(clients[cid]);
+        auto shared = weak.lock();
+        std::string caddr = shared->get_address_as_string();
+        if (shared) { clients.erase(cid); }
+        Log(std::format("Connection from {} lost", caddr));
     }
-
-    void on_write(error_code error, std::size_t bytes_transferred) {
-        if (!error) {
-            outgoing.pop();
-
-            if (!outgoing.empty()) {
-                async_write();
-            }
-        } else {
-            socket.close(error);
-            on_error();
-        }
-    }
-
-private:
-    enum { buffer_size = 1024 };
-    char readArray[buffer_size];
-    char writeArray[buffer_size];
-    asio::mutable_buffer readBuffer = asio::buffer(readArray, 1024);
-    asio::mutable_buffer writeBuffer = asio::buffer(writeArray, 1024);
-    tcp::socket socket; // Client's socket
-    asio::streambuf streambuf{65535}; // Streambuf for incoming data
-    std::queue<std::string> outgoing; // The queue of outgoing messages
-    message_handler on_message; // Message handler
-    error_handler on_error; // Error handler
-};
-
-class server {
-public:
-    // here we want an asio context reference
-    server(asio::io_context &io_context_, std::uint16_t port) : io_context(io_context_), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {}
-
-    void log(std::string message) {
-        std::cout << std::format("[{:%T}] Log: {} [Total Online: {}]\n",
-                                 floor<std::chrono::seconds>(std::chrono::system_clock::now()),
-                                 message, (int) clients.size());
-    }
-
-    void async_accept() {
-        socket.emplace(io_context);
-
-        acceptor.async_accept(*socket, [&](error_code error)
-        {
-            auto client = std::make_shared<session>(std::move(*socket)); // session constructor takes rvalue std::move(*socket)
-            client->post("Welcome to chat\n\r");
-            post("Client joined.\n\r");
-            clients.insert(client);
-
-            // server-side inform of connection
-            log("Client Connected.");
-
-            client->start
-                    (
-                            std::bind(&server::post, this, _1),
-                            [&, weak = std::weak_ptr(client)] {
-                                if (auto shared = weak.lock(); shared && clients.erase(shared)) {
-                                    post("Client disconnected.\n\r");
-                                    log("Client Disconnected.");
-                                }
-                            }
-                    );
-
-            async_accept();
-        });
-    }
-
-    void post(std::string const &message) {
-        for (auto &client : clients) {
-            client->post(message);
-        }
-    }
-
-private:
-    asio::io_context &io_context; // reference to the io_context object
-    tcp::acceptor acceptor;
-    std::optional<tcp::socket> socket;
-    // A set of connected clients
-    std::unordered_set<std::shared_ptr<session>> clients;
-};
+}
