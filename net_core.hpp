@@ -36,9 +36,9 @@ public:
     void handler_begin();
     void handler_write(asio::error_code error, std::size_t bytes_transferred);
     void handler_read(asio::error_code error, std::size_t bytes_transferred);
-    void set_handlers(std::function<void()> &&err_handler, std::function<void(std::string)> &&msg_handler);
+    void set_handlers(std::function<void(int)> &&err_handler, std::function<void(std::string)> &&msg_handler);
 
-    void async_send_message(const std::string &msg);
+    void async_send_message(std::string &msg);
     std::string get_address_as_string();
     int get_client_id();
 private:
@@ -46,7 +46,7 @@ private:
     tcp::socket socket;
     asio::streambuf stream_buffer;
     std::queue<std::string> message_queue;
-    std::function<void()> error_handler;
+    std::function<void(int)> error_handler;
     std::function<void(std::string)> message_handler;
 };
 
@@ -55,13 +55,15 @@ class Server {
 public:
     Server(asio::io_context &context, std::uint16_t port);
     void async_accept_connection();
-    void async_post(const std::string &msg);
+    void async_post(std::string &msg);
+    void async_post(std::string &&msg);
 private:
-    void on_accept(const std::string &announce_msg);
+    void on_accept(tcp::socket &tmp_socket, asio::error_code error);
     void on_error(int cid);
-    void on_message(const std::string &msg);
+    void on_message(std::string &msg);
 private:
     asio::io_context &io_context;
+    std::unique_ptr<asio::error_code> ec;
     tcp::acceptor acceptor;
     std::optional<tcp::socket> temp_socket;
     int client_id;
