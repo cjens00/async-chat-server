@@ -46,10 +46,10 @@ RM = "C:\Program Files\JetBrains\CLion 2021.1.3\bin\cmake\win\bin\cmake.exe" -E 
 EQUALS = =
 
 # The top-level source directory on which CMake was run.
-CMAKE_SOURCE_DIR = "D:\Programming Projects\Win11\Cpp\game_server"
+CMAKE_SOURCE_DIR = "D:\Programming Projects\Win11\Cpp\Async-Chat-Server"
 
 # The top-level build directory on which CMake was run.
-CMAKE_BINARY_DIR = "D:\Programming Projects\Win11\Cpp\game_server\out\dbg"
+CMAKE_BINARY_DIR = "D:\Programming Projects\Win11\Cpp\Async-Chat-Server\out\dbg"
 
 #=============================================================================
 # Targets provided globally by CMake.
@@ -76,9 +76,9 @@ rebuild_cache\fast: rebuild_cache
 
 # The main all target
 all: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" "D:\Programming Projects\Win11\Cpp\game_server\out\dbg\\CMakeFiles\progress.marks"
+	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Programming Projects\Win11\Cpp\Async-Chat-Server\out\dbg\CMakeFiles" "D:\Programming Projects\Win11\Cpp\Async-Chat-Server\out\dbg\\CMakeFiles\progress.marks"
 	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) all
-	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Programming Projects\Win11\Cpp\game_server\out\dbg\CMakeFiles" 0
+	$(CMAKE_COMMAND) -E cmake_progress_start "D:\Programming Projects\Win11\Cpp\Async-Chat-Server\out\dbg\CMakeFiles" 0
 .PHONY : all
 
 # The main clean target
@@ -106,24 +106,24 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named game_server
+# Target rules for targets named Async-Chat-Server
 
 # Build rule for target.
-game_server: cmake_check_build_system
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) game_server
-.PHONY : game_server
+Async-Chat-Server: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Makefile2 /nologo -$(MAKEFLAGS) Async-Chat-Server
+.PHONY : Async-Chat-Server
 
 # fast build rule for target.
-game_server\fast:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\build
-.PHONY : game_server\fast
+Async-Chat-Server\fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\build
+.PHONY : Async-Chat-Server\fast
 
 main.obj: main.cpp.obj
 .PHONY : main.obj
 
 # target to build an object file
 main.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\main.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\main.cpp.obj
 .PHONY : main.cpp.obj
 
 main.i: main.cpp.i
@@ -131,7 +131,7 @@ main.i: main.cpp.i
 
 # target to preprocess a source file
 main.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\main.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\main.cpp.i
 .PHONY : main.cpp.i
 
 main.s: main.cpp.s
@@ -139,7 +139,7 @@ main.s: main.cpp.s
 
 # target to generate assembly for a file
 main.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\main.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\main.cpp.s
 .PHONY : main.cpp.s
 
 net_core.obj: net_core.cpp.obj
@@ -147,7 +147,7 @@ net_core.obj: net_core.cpp.obj
 
 # target to build an object file
 net_core.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core.cpp.obj
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\net_core.cpp.obj
 .PHONY : net_core.cpp.obj
 
 net_core.i: net_core.cpp.i
@@ -155,7 +155,7 @@ net_core.i: net_core.cpp.i
 
 # target to preprocess a source file
 net_core.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\net_core.cpp.i
 .PHONY : net_core.cpp.i
 
 net_core.s: net_core.cpp.s
@@ -163,32 +163,8 @@ net_core.s: net_core.cpp.s
 
 # target to generate assembly for a file
 net_core.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles\Async-Chat-Server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\Async-Chat-Server.dir\net_core.cpp.s
 .PHONY : net_core.cpp.s
-
-net_core_from_tutorial.obj: net_core_from_tutorial.cpp.obj
-.PHONY : net_core_from_tutorial.obj
-
-# target to build an object file
-net_core_from_tutorial.cpp.obj:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.obj
-.PHONY : net_core_from_tutorial.cpp.obj
-
-net_core_from_tutorial.i: net_core_from_tutorial.cpp.i
-.PHONY : net_core_from_tutorial.i
-
-# target to preprocess a source file
-net_core_from_tutorial.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.i
-.PHONY : net_core_from_tutorial.cpp.i
-
-net_core_from_tutorial.s: net_core_from_tutorial.cpp.s
-.PHONY : net_core_from_tutorial.s
-
-# target to generate assembly for a file
-net_core_from_tutorial.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles\game_server.dir\build.make /nologo -$(MAKEFLAGS) CMakeFiles\game_server.dir\net_core_from_tutorial.cpp.s
-.PHONY : net_core_from_tutorial.cpp.s
 
 # Help Target
 help:
@@ -198,16 +174,13 @@ help:
 	@echo ... depend
 	@echo ... edit_cache
 	@echo ... rebuild_cache
-	@echo ... game_server
+	@echo ... Async-Chat-Server
 	@echo ... main.obj
 	@echo ... main.i
 	@echo ... main.s
 	@echo ... net_core.obj
 	@echo ... net_core.i
 	@echo ... net_core.s
-	@echo ... net_core_from_tutorial.obj
-	@echo ... net_core_from_tutorial.i
-	@echo ... net_core_from_tutorial.s
 .PHONY : help
 
 
