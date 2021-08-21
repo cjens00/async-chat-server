@@ -39,6 +39,7 @@ public:
     void set_handlers(std::function<void(int)> &&err_handler, std::function<void(std::string)> &&msg_handler);
 
     void async_send_message(std::string &msg);
+    std::string initialize_address_as_string();
     std::string get_address_as_string();
     int get_client_id();
 private:
@@ -48,6 +49,7 @@ private:
     std::queue<std::string> message_queue;
     std::function<void(int)> error_handler;
     std::function<void(std::string)> message_handler;
+    std::string client_ip_string;
 };
 
 class Server {

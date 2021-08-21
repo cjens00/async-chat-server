@@ -19,7 +19,9 @@ void Log(std::string s) {
 /// ---------------------------------------
 
 /// Session Constructor
-Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifier(id) {}
+Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifier(id) {
+    client_ip_string = initialize_address_as_string();
+}
 
 /// Performs required setup tasks for Session
 void Session::async_session_begin() {
@@ -72,8 +74,12 @@ void Session::set_handlers(std::function<void(int)> &&err_handler, std::function
     message_handler = std::move(msg_handler);
 }
 
-/// Return String representation of client's IP Address
-std::string Session::get_address_as_string() { return socket.remote_endpoint().address().to_string(); }
+/// Initializes field client_ip_string after the socket has been opened, private use only.
+/// Do not call more than once along with constructor.
+std::string Session::initialize_address_as_string() { return socket.remote_endpoint().address().to_string(); }
+
+/// Return string representation of client's IP Address
+std::string Session::get_address_as_string() { return client_ip_string; };
 
 /// Sends a string msg to the associated client
 void Session::async_send_message(std::string &msg) {
@@ -111,15 +117,14 @@ void Server::async_accept_connection() {
 void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
     if (!error) {
         auto new_client = std::make_shared<Session>(std::move(*temp_socket), client_id);
-
         clients.insert({client_id, new_client});
         // TODO: Fix problem with handlers, w/o err handler there can be no debugging, just hangs on connect
         new_client->set_handlers([&](int client_id) { on_error(client_id); },
                                  [&](std::string msg) { on_message(msg); });
         new_client->async_session_begin();
         client_id++;
-        async_post(std::format("User at {} is online", new_client->get_address_as_string()));
-        Log(std::format("Accepted new connection from {}", new_client->get_address_as_string()));
+        async_post(std::format("User at {} is online\r\n", new_client->initialize_address_as_string()));
+        Log(std::format("Accepted new connection from {}", new_client->initialize_address_as_string()));
         async_accept_connection();
     } else {
         on_error(-1);
@@ -148,12 +153,15 @@ void Server::on_message(std::string &msg) {
 
 /// Error Handler, also handles disconnects
 void Server::on_error(int cid) {
+    std::string ec_msg = ec.get()->message();
     if (cid == -1) {
-        std::cout << "on_error[server]  : " << ec->message() << std::endl;
+        Log(std::format("on_error[server]: {}", ec_msg));
     } else {
-        std::cout << "on_error[session] : " << ec->message() << std::endl;
+        Log(std::format("on_error[session]: {}", ec_msg));
+
         auto weak = std::weak_ptr(clients[cid]);
         auto shared = weak.lock();
+
         std::string caddr = shared->get_address_as_string();
         if (shared) { clients.erase(cid); }
         Log(std::format("Connection from {} lost", caddr));
