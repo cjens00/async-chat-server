@@ -101,7 +101,7 @@ int Session::get_client_id() {
 /// Constructor
 Server::Server(asio::io_context &context, std::uint16_t port)
         : io_context(context), acceptor(io_context, tcp::endpoint(tcp::v4(), port)),
-            client_id(0) {
+          client_id(0) {
     Log("Server Initialized.");
 }
 
@@ -110,7 +110,8 @@ void Server::async_accept_connection() {
     temp_socket.emplace(io_context);
     acceptor.async_accept(*temp_socket, [&](asio::error_code errc) {
         if (!ec) ec = std::make_unique<asio::error_code>(errc);
-        on_accept(*temp_socket, errc); });
+        on_accept(*temp_socket, errc);
+    });
 }
 
 /// Notify all clients of new connection, then await another connection
@@ -118,7 +119,6 @@ void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
     if (!error) {
         auto new_client = std::make_shared<Session>(std::move(*temp_socket), client_id);
         clients.insert({client_id, new_client});
-        // TODO: Fix problem with handlers, w/o err handler there can be no debugging, just hangs on connect
         new_client->set_handlers([&](int client_id) { on_error(client_id); },
                                  [&](std::string msg) { on_message(msg); });
         new_client->async_session_begin();
@@ -154,16 +154,25 @@ void Server::on_message(std::string &msg) {
 /// Error Handler, also handles disconnects
 void Server::on_error(int cid) {
     std::string ec_msg = ec.get()->message();
+    int ec_val = ec.get()->value();
+    std::string caddr = clients[cid]->get_address_as_string();
+    // Attempt to make a new shared ptr for duration of this function
+    auto weak = std::weak_ptr(clients[cid]);
+    auto shared = weak.lock();
+    // If new shared_ptr made, erase old from list of clients
+    if (shared)
+        clients.erase(cid);
+    // If cid == -1, function was called from inside Server object
     if (cid == -1) {
         Log(std::format("on_error[server]: {}", ec_msg));
     } else {
-        Log(std::format("on_error[session]: {}", ec_msg));
-
-        auto weak = std::weak_ptr(clients[cid]);
-        auto shared = weak.lock();
-
-        std::string caddr = shared->get_address_as_string();
-        if (shared) { clients.erase(cid); }
-        Log(std::format("Connection from {} lost", caddr));
+        // If there's an error, print it to server log
+        if (ec_val) {
+            Log(std::format("on_error[session]: {}", ec_msg));
+            Log(std::format("on_error[session]: Client at {} disconnected", caddr));
+        } else {
+            Log(std::format("on_error[session]: No error, Client at {} disconnected", caddr));
+        }
     }
+    async_post(std::format("{} disconnected.\r\n", caddr));
 }

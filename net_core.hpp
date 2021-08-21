@@ -1,5 +1,11 @@
-/// Client & Server Objects, Asynchronous Free Functions                ///
-/// Practicing with move semantics and strange, ASIO-style programming   ///
+/// ----------------------------------------------------------------------- ///
+///         Declarations for Session and Server classes                     ///
+/// ----------------------------------------------------------------------- ///
+/// - Server handles accepting incoming connections using TCP               ///
+///     and sending messages out to all session objects.                    ///
+/// - Session handles the reading and writing to/from individual sockets.   ///
+/// ----------------------------------------------------------------------- ///
+
 #pragma once
 
 #include <iostream>
@@ -27,7 +33,7 @@ class Session;
 class Session : public std::enable_shared_from_this<Session> {
     friend Server;
 public:
-    explicit Session(tcp::socket &&sock, int id);
+    Session(tcp::socket &&sock, int id);
     void async_session_begin();
 
     void async_write();
