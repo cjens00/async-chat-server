@@ -17,12 +17,20 @@
 #include <queue>
 #include <map>
 
+// For Windows Sockets
 #ifdef _WIN32
     #define _WIN32_WINNT 0x0A00
 #endif
 
+// Asio
 #define ASIO_STANDALONE
 #include <asio.hpp>
+
+// fmt Formatting Library
+#include <fmt/core.h>
+#include <fmt/format.h>
+#include <fmt/ostream.h>
+#include <fmt/compile.h>
 
 using tcp = asio::ip::tcp;
 using namespace std::placeholders;

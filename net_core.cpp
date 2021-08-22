@@ -10,7 +10,7 @@
 /// TODO: Write to logfile
 void Log(std::string s) {
     auto timestamp = floor<std::chrono::seconds>(std::chrono::system_clock::now());
-    auto log = std::format("{} Log: ", timestamp);
+    auto log = fmt::format("{} Log: ", timestamp);
     std::cout << log << s << std::endl;
 }
 
@@ -123,8 +123,8 @@ void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
                                  [&](std::string msg) { on_message(msg); });
         new_client->async_session_begin();
         client_id++;
-        async_post(std::format("User at {} is online\r\n", new_client->initialize_address_as_string()));
-        Log(std::format("Accepted new connection from {}", new_client->initialize_address_as_string()));
+        async_post(fmt::format("User at {} is online\r\n", new_client->initialize_address_as_string()));
+        Log(fmt::format("Accepted new connection from {}", new_client->initialize_address_as_string()));
         async_accept_connection();
     } else {
         on_error(-1);
@@ -164,15 +164,15 @@ void Server::on_error(int cid) {
         clients.erase(cid);
     // If cid == -1, function was called from inside Server object
     if (cid == -1) {
-        Log(std::format("on_error[server]: {}", ec_msg));
+        Log(fmt::format("on_error[server]: {}", ec_msg));
     } else {
         // If there's an error, print it to server log
         if (ec_val) {
-            Log(std::format("on_error[session]: {}", ec_msg));
-            Log(std::format("on_error[session]: Client at {} disconnected", caddr));
+            Log(fmt::format("on_error[session]: {}", ec_msg));
+            Log(fmt::format("on_error[session]: Client at {} disconnected", caddr));
         } else {
-            Log(std::format("on_error[session]: No error, Client at {} disconnected", caddr));
+            Log(fmt::format("on_error[session]: No error, Client at {} disconnected", caddr));
         }
     }
-    async_post(std::format("{} disconnected.\r\n", caddr));
+    async_post(fmt::format("{} disconnected.\r\n", caddr));
 }
