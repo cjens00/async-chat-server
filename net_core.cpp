@@ -19,7 +19,8 @@ void Log(std::string s) {
 /// ---------------------------------------
 
 /// Session Constructor
-Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifier(id) {
+Session::Session(tcp::socket &&sock, std::weak_ptr<Server> &serv, int id) : socket(std::move(sock)), identifier(id) {
+    server = std::move(serv);
     client_ip_string = initialize_address_as_string();
 }
 
@@ -89,9 +90,27 @@ void Session::async_send_message(std::string &msg) {
         async_write();
 }
 
+void Session::async_send_message(const std::string &msg) {
+    bool isIdle = message_queue.empty();
+    message_queue.push(msg);
+    if (isIdle)
+        async_write();
+}
+
 /// Returns the session's client identifier value
 int Session::get_client_id() {
     return identifier;
+}
+
+/// Sends a message to this Session's client only
+void Session::notify(const std::string &notification) {
+    asio::async_write(socket, asio::buffer(notification),
+                      [&](asio::error_code error, std::size_t b_tx) {
+                          if (error) {
+                              socket.close(error);
+                              error_handler(get_client_id());
+                          }
+                      });
 }
 
 /// ---------------------------------------
@@ -100,9 +119,14 @@ int Session::get_client_id() {
 
 /// Constructor
 Server::Server(asio::io_context &context, std::uint16_t port)
-        : io_context(context), acceptor(io_context, tcp::endpoint(tcp::v4(), port)),
-          client_id(0) {
+        : io_context(context), acceptor(io_context, tcp::endpoint(tcp::v4(), port)) {
+    client_id = 0;
     Log("Server Initialized.");
+}
+
+void Server::init() {
+    auto weak = weak_from_this();
+    this_server = weak.lock();
 }
 
 /// Asynchronously accept a new connection
@@ -117,7 +141,8 @@ void Server::async_accept_connection() {
 /// Notify all clients of new connection, then await another connection
 void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
     if (!error) {
-        auto new_client = std::make_shared<Session>(std::move(*temp_socket), client_id);
+        auto weak_server = std::weak_ptr<Server>(this_server);
+        auto new_client = std::make_shared<Session>(std::move(*temp_socket), weak_server, client_id);
         clients.insert({client_id, new_client});
         new_client->set_handlers([&](int client_id) { on_error(client_id); },
                                  [&](std::string msg) { on_message(msg); });
@@ -129,6 +154,36 @@ void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
     } else {
         on_error(-1);
     }
+}
+
+bool Server::check_command(std::string &msg) {
+    std::stringstream ss(msg);
+    std::string who;
+    char isSlash;
+    std::string command;
+    std::vector<std::string> tokens;
+
+    std::getline(ss, who, ' ');
+    if ( == '/') {
+        std::string temp;
+        while (std::getline(ss, temp, ' ')) {
+            tokens.push_back(temp);
+        }
+    } else {
+        return false;
+    }
+    if(tokens.size() > 1 && tokens[0] == "server")
+        command = tokens[1];
+    if (command == "shutdown")
+        execute_command(SERVER_COMMAND_SHUTDOWN);
+    return true;
+}
+
+void Server::execute_command(int command) {
+    if (command == SERVER_COMMAND_SHUTDOWN) shutdown_server();
+    else if (command == 65533) return; // command 2
+    else if (command == 65534) return; // command 3
+    else if (command == 65535) return; // command 4 ...etc.
 }
 
 /// Make an announcement 'msg' to all connected clients
@@ -148,12 +203,13 @@ void Server::async_post(std::string &&msg) {
 
 /// Message handler, writes a received message to all client sockets
 void Server::on_message(std::string &msg) {
-    async_post(msg);
+    bool isCommand = check_command(msg);
+    if (!isCommand) { async_post(msg); }
 }
 
 /// Error Handler, also handles disconnects
 void Server::on_error(int cid) {
-    std::string ec_msg = ec.get()->message();
+    std::string ec_msg = ec.get()->message(); // TODO: remove get() and check
     int ec_val = ec.get()->value();
     std::string caddr = clients[cid]->get_address_as_string();
     // Attempt to make a new shared ptr for duration of this function
@@ -176,3 +232,32 @@ void Server::on_error(int cid) {
     }
     async_post(fmt::format("{} disconnected.\r\n", caddr));
 }
+
+void Server::shutdown_server() {
+    Log("Server shutdown sequence initiated. Source:[]");
+    async_post(fmt::format("SERVER: The server is shutting down\r\n"));
+    std::string notification = "You were disconnected from the server.\r\n";
+    for (auto &client: clients) {
+        // If statement checks to make sure they're still online
+        if (client.second) {
+            client.second->notify(notification);
+            client.second->socket.close();
+            wipe_client(client.first);
+        }
+    }
+    Log("Server shutdown sequence: client disconnections complete. Stopping service.");
+    io_context.stop();
+}
+
+void Server::wipe_client(int cid) {
+    if (clients[cid] == nullptr) {
+        Log(fmt::format("Client does not exist."));
+    } else {
+        std::string caddr = clients[cid]->get_address_as_string();
+        auto weak = std::weak_ptr(clients[cid]);
+        auto shared = weak.lock();
+        if (shared)
+            clients.erase(cid);
+    }
+}
+

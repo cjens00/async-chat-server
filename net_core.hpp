@@ -12,7 +12,7 @@
 #include <functional>
 #include <optional>
 #include <string>
-#include <format>
+#include <sstream>
 #include <vector>
 #include <queue>
 #include <map>
@@ -38,10 +38,10 @@ using namespace std::placeholders;
 class Server;
 class Session;
 
-class Session : public std::enable_shared_from_this<Session> {
+class Session : std::enable_shared_from_this<Session> {
     friend Server;
 public:
-    Session(tcp::socket &&sock, int id);
+    Session(tcp::socket &&sock, std::weak_ptr<Server> &serv, int id);
     void async_session_begin();
 
     void async_write();
@@ -53,10 +53,13 @@ public:
     void set_handlers(std::function<void(int)> &&err_handler, std::function<void(std::string)> &&msg_handler);
 
     void async_send_message(std::string &msg);
+    void async_send_message(const std::string &msg);
     std::string initialize_address_as_string();
     std::string get_address_as_string();
     int get_client_id();
+    void notify(const std::string &notification);
 private:
+    std::weak_ptr<Server> server;
     int identifier;
     tcp::socket socket;
     asio::streambuf stream_buffer;
@@ -66,19 +69,32 @@ private:
     std::string client_ip_string;
 };
 
-class Server {
+class Server : std::enable_shared_from_this<Server> {
     friend Session;
 public:
     Server(asio::io_context &context, std::uint16_t port);
+    void init();
+
     void async_accept_connection();
     void async_post(std::string &msg);
     void async_post(std::string &&msg);
+    bool check_command(std::string &msg);
+    void execute_command(int command);
 private:
     void on_accept(tcp::socket &tmp_socket, asio::error_code error);
     void on_error(int cid);
     void on_message(std::string &msg);
+    void shutdown_server();
+    void wipe_client(int cid);
+    enum {
+        SERVER_COMMAND_SHUTDOWN = 0,
+        SERVER_COMMAND_ADD_UNITY_CLIENT = 1,
+        SERVER_COMMAND_DISCONNECT_CLIENT = 98,
+        SERVER_COMMAND_DISCONNECT_ALL = 99
+    };
 private:
     asio::io_context &io_context;
+    std::shared_ptr<Server> this_server;
     std::unique_ptr<asio::error_code> ec;
     tcp::acceptor acceptor;
     std::optional<tcp::socket> temp_socket;
