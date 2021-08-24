@@ -10,7 +10,8 @@
 /// TODO: Write to logfile
 void Log(std::string s) {
     auto timestamp = floor<std::chrono::seconds>(std::chrono::system_clock::now());
-    auto log = fmt::format("{} Log: ", timestamp);
+    auto fmt_time = fmt::localtime(timestamp);
+    auto log = fmt::format("{ts} Log: ", fmt::arg("ts", fmt_time));
     std::cout << log << s << std::endl;
 }
 
