@@ -14,13 +14,30 @@ void Log(std::string s) {
     std::cout << log << s << std::endl;
 }
 
+/// Tokenizes a string, used for checking client socket reads for commands, etc.
+/// Would be faster to use a vector reference to avoid copying by value afterward,
+/// but for now I'll leave it like this.
+std::vector<std::string> Tokenize_String(std::string s) {
+    std::string token;
+    std::vector<std::string> token_list;
+    std::for_each(s.begin(), s.end(),
+                  [&](auto &c) {
+                      if (c != ' ') {
+                          token.push_back(c);
+                      } else {
+                          token_list.push_back(token);
+                          token.clear();
+                      }
+                  });
+    return token_list;
+}
+
 /// ---------------------------------------
 ///     Session Implementation
 /// ---------------------------------------
 
 /// Session Constructor
-Session::Session(tcp::socket &&sock, std::weak_ptr<Server> &serv, int id) : socket(std::move(sock)), identifier(id) {
-    server = std::move(serv);
+Session::Session(tcp::socket &&sock, int id) : socket(std::move(sock)), identifier(id) {
     client_ip_string = initialize_address_as_string();
 }
 
@@ -59,10 +76,19 @@ void Session::handler_write(asio::error_code error, std::size_t bytes_transferre
 void Session::handler_read(asio::error_code error, std::size_t bytes_transferred) {
     if (!error) {
         std::stringstream message;
-        message << socket.remote_endpoint(error) << ": " << std::istream(&stream_buffer).rdbuf();
-        stream_buffer.consume(bytes_transferred);
-        message_handler(message.str());
-        async_read();
+        // Check if string is of command format (leading '/')
+        // TODO: the problem is not here, but with weak->shared ptr for server obj
+        if (std::istream(&stream_buffer).peek() == '/') {
+            message << std::istream(&stream_buffer).rdbuf();
+            stream_buffer.consume(bytes_transferred);
+            command_handler(message.str());
+            async_read();
+        } else {
+            message << socket.remote_endpoint(error) << ": " << std::istream(&stream_buffer).rdbuf();
+            stream_buffer.consume(bytes_transferred);
+            message_handler(message.str());
+            async_read();
+        }
     } else {
         socket.close(error);
         error_handler(get_client_id());
@@ -70,9 +96,13 @@ void Session::handler_read(asio::error_code error, std::size_t bytes_transferred
 }
 
 /// Move error handler from Server
-void Session::set_handlers(std::function<void(int)> &&err_handler, std::function<void(std::string)> &&msg_handler) {
+// TODO: typedef these
+void Session::set_handlers(std::function<void(int)> &&err_handler,
+                           std::function<void(std::string)> &&msg_handler,
+                           std::function<void(std::string)> &&cmd_handler) {
     error_handler = std::move(err_handler);
     message_handler = std::move(msg_handler);
+    command_handler = std::move(cmd_handler);
 }
 
 /// Initializes field client_ip_string after the socket has been opened, private use only.
@@ -124,11 +154,6 @@ Server::Server(asio::io_context &context, std::uint16_t port)
     Log("Server Initialized.");
 }
 
-void Server::init() {
-    auto weak = weak_from_this();
-    this_server = weak.lock();
-}
-
 /// Asynchronously accept a new connection
 void Server::async_accept_connection() {
     temp_socket.emplace(io_context);
@@ -141,11 +166,11 @@ void Server::async_accept_connection() {
 /// Notify all clients of new connection, then await another connection
 void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
     if (!error) {
-        auto weak_server = std::weak_ptr<Server>(this_server);
-        auto new_client = std::make_shared<Session>(std::move(*temp_socket), weak_server, client_id);
+        auto new_client = std::make_shared<Session>(std::move(*temp_socket), client_id);
         clients.insert({client_id, new_client});
         new_client->set_handlers([&](int client_id) { on_error(client_id); },
-                                 [&](std::string msg) { on_message(msg); });
+                                 [&](std::string msg) { on_message(msg); },
+                                 [&](std::string cmd) { on_command(cmd); });
         new_client->async_session_begin();
         client_id++;
         async_post(fmt::format("User at {} is online\r\n", new_client->initialize_address_as_string()));
@@ -157,22 +182,22 @@ void Server::on_accept(tcp::socket &tmp_socket, asio::error_code error) {
 }
 
 bool Server::check_command(std::string &msg) {
-    std::stringstream ss(msg);
-    std::string who;
-    char isSlash;
     std::string command;
-    std::vector<std::string> tokens;
+    std::vector<std::string> tokens = Tokenize_String(msg);
+    std::cout << "Testing here." << std::endl;
+    if (tokens.size() > 1 && tokens[0] == "/server")
+        command = tokens[1];
+    if (command == "shutdown")
+        execute_command(SERVER_COMMAND_SHUTDOWN);
+    return true;
+}
 
-    std::getline(ss, who, ' ');
-    if ( == '/') {
-        std::string temp;
-        while (std::getline(ss, temp, ' ')) {
-            tokens.push_back(temp);
-        }
-    } else {
-        return false;
-    }
-    if(tokens.size() > 1 && tokens[0] == "server")
+bool Server::check_command(std::string &&msg_) {
+    auto msg = std::move(msg_);
+    std::string command;
+    std::vector<std::string> tokens = Tokenize_String(msg);
+    std::cout << "Testing here." << std::endl;
+    if (tokens.size() > 1 && tokens[0] == "server")
         command = tokens[1];
     if (command == "shutdown")
         execute_command(SERVER_COMMAND_SHUTDOWN);
@@ -201,10 +226,14 @@ void Server::async_post(std::string &&msg) {
     }
 }
 
+/// On Command Handler
+void Server::on_command(std::string &command) {
+    check_command(command);
+}
+
 /// Message handler, writes a received message to all client sockets
 void Server::on_message(std::string &msg) {
-    bool isCommand = check_command(msg);
-    if (!isCommand) { async_post(msg); }
+    async_post(msg);
 }
 
 /// Error Handler, also handles disconnects
@@ -233,22 +262,27 @@ void Server::on_error(int cid) {
     async_post(fmt::format("{} disconnected.\r\n", caddr));
 }
 
+// TODO: fix shutdown sequence, after successful d/c of all clients
+//  it throws an exception about string iterator
 void Server::shutdown_server() {
-    Log("Server shutdown sequence initiated. Source:[]");
-    async_post(fmt::format("SERVER: The server is shutting down\r\n"));
-    std::string notification = "You were disconnected from the server.\r\n";
-    for (auto &client: clients) {
-        // If statement checks to make sure they're still online
-        if (client.second) {
-            client.second->notify(notification);
-            client.second->socket.close();
-            wipe_client(client.first);
+    {
+        Log("Server shutdown sequence initiated. Source:[]");
+        async_post(fmt::format("SERVER: The server is shutting down\r\n"));
+        std::string notification = "You were disconnected from the server.\r\n";
+        for (auto &client: clients) {
+            // If statement checks to make sure they're still online
+            if (client.second) {
+                client.second->notify(notification);
+                client.second->socket.shutdown(tcp::socket::shutdown_both);
+                client.second->socket.close();
+            }
         }
+        Log("Server shutdown sequence: client disconnections complete. Stopping service.");
     }
-    Log("Server shutdown sequence: client disconnections complete. Stopping service.");
-    io_context.stop();
+    // acceptor.close();
 }
 
+/// Not in use at the moment, not needed for a shutdown sequence anyway
 void Server::wipe_client(int cid) {
     if (clients[cid] == nullptr) {
         Log(fmt::format("Client does not exist."));
@@ -260,4 +294,3 @@ void Server::wipe_client(int cid) {
             clients.erase(cid);
     }
 }
-
